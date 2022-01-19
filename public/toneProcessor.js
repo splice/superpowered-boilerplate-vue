@@ -6,38 +6,43 @@ class SuperpoweredSingleGeneratorStageProcessor extends SuperpoweredWebAudio.Aud
 
   // runs after the constructor
   onReady() {
-      this.generator = new this.Superpowered.Generator(
-          this.samplerate,                      // The initial sample rate in Hz.
-          this.Superpowered.Generator.Sine // The initial shape.
-      );
-      this.generator.frequency = 440;
+    this.generator = new this.Superpowered.Generator(
+        this.samplerate,                      // The initial sample rate in Hz.
+        this.Superpowered.Generator.Sine // The initial shape.
+    );
+    this.generator.frequency = 440;
 
-      // Create an empty buffer o store the ouput of the mono generator. 2048 is the largest buffer size we'll need to deal with
-      this.genOutputBuffer = new this.Superpowered.Float32Buffer(2048);
+    // Create an empty buffer o store the ouput of the mono generator. 2048 is the largest buffer size we'll need to deal with
+    this.genOutputBuffer = new this.Superpowered.Float32Buffer(2048);
   }
 
   onDestruct() {
-      this.generator.destruct();
+    this.generator.destruct();
   }
 
   // messages are received from the main scope through this method.
   onMessageFromMainScope(message) {
-      if (typeof message.frequency !== 'undefined') this.generator.frequency = message.frequency;
+    if (typeof message.frequency !== 'undefined') this.generator.frequency = message.frequency;
   }
 
   processAudio(inputBuffer, outputBuffer, buffersize, parameters) {
-      this.generator.generate(
-          this.genOutputBuffer.pointer, // output, // Pointer to floating point numbers. 32-bit MONO output.
-          buffersize   // number of samples to generae
-      );
+    // Ensure the samplerate is in sync on every audio processing callback
+    this.generator.samplerate = this.samplerate;
 
-      // We now need to convert the mono signal from the generaor into he interleaved stereo format that the parent audio context requires.
-      this.Superpowered.Interleave(
-          this.genOutputBuffer.pointer, // left mono input
-          this.genOutputBuffer.pointer, // right mono input
-          outputBuffer.pointer, // stereo output - this is what is routed to the AudioWorkletProcessor output
-          buffersize // number of frames
-      );
+	// Render the output buffers
+
+    this.generator.generate(
+        this.genOutputBuffer.pointer, // output, // Pointer to floating point numbers. 32-bit MONO output.
+        buffersize   // number of samples to generae
+    );
+
+    // We now need to convert the mono signal from the generaor into he interleaved stereo format that the parent audio context requires.
+    this.Superpowered.Interleave(
+        this.genOutputBuffer.pointer, // left mono input
+        this.genOutputBuffer.pointer, // right mono input
+        outputBuffer.pointer, // stereo output - this is what is routed to the AudioWorkletProcessor output
+        buffersize // number of frames
+    );
   }
 }
 
