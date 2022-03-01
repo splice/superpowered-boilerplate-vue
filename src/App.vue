@@ -11,7 +11,7 @@
   <button v-if="$data.Superpowered && !$data.webAudioManager" @click="onBoot()">
     Start tone
   </button>
-   
+
   <div v-if="$data.webAudioManager">
     <p>
       Sample Rate:
@@ -23,7 +23,7 @@
       {{ $data.webAudioManager.audioContext.baseLatency.toFixed(3) }}s
     </p>
   </div>
-  
+
 </template>
 
 <script>
@@ -47,16 +47,7 @@ export default {
       this.Superpowered = await SuperpoweredGlue.fetch(
         "./superpowered/superpowered.wasm"
       );
-      this.Superpowered.Initialize({
-        licenseKey: "ExampleLicenseKey-WillExpire-OnNextUpdate",
-        enableAudioAnalysis: true,
-        enableFFTAndFrequencyDomain: false,
-        enableAudioTimeStretching: false,
-        enableAudioEffects: true,
-        enableAudioPlayerAndDecoder: false,
-        enableCryptographics: false,
-        enableNetworking: false,
-      });
+      this.Superpowered.Initialize("ExampleLicenseKey-WillExpire-OnNextUpdate");
     },
     // Create a WebAudioManager
     createWebAudioManager() {
@@ -72,7 +63,7 @@ export default {
 
       // connect the reverb node to end destination node
       this.audioNode.connect(this.webAudioManager.audioContext.destination);
-      
+
     },
     onParamChange(id, e) {
       this.audioNode.sendMessageToAudioScope({ [id]: e.target.value });
@@ -80,7 +71,7 @@ export default {
   },
   created() {
     this.initialiseSuperpoweredWebAssembly();
-    
+
   },
 };
 </script>
