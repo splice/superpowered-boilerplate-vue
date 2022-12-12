@@ -27,10 +27,7 @@
 </template>
 
 <script>
-import {
-  SuperpoweredGlue,
-  SuperpoweredWebAudio,
-} from "./assets/superpowered/SuperpoweredWebAudio.js";
+import "../public/js/Superpowered.js";
 
 export default {
   name: "App",
@@ -39,18 +36,21 @@ export default {
       Superpowered: null, // Reference to the Superpowered module.
       webAudioManager: null, // The SuperpoweredWebAudio helper class managing Web Audio for us.
       audioNode: null, // This example uses one audio node only.
+      spLocation: "/Superpowered.js"
     };
   },
   methods: {
     //Instantite and initialize the Superpowered WebAssembly
     async initialiseSuperpoweredWebAssembly() {
-      this.Superpowered = await SuperpoweredGlue.fetch(
-        "./superpowered/superpowered.wasm"
-      );
-      this.Superpowered.Initialize("ExampleLicenseKey-WillExpire-OnNextUpdate");
+    // eslint-disable-next-line
+      this.Superpowered = await SuperpoweredGlue.Instantiate(
+      "ExampleLicenseKey-WillExpire-OnNextUpdate",
+      this.spLocation
+    );
     },
     // Create a WebAudioManager
     createWebAudioManager() {
+    // eslint-disable-next-line
       this.webAudioManager = new SuperpoweredWebAudio(48000, this.Superpowered);
     },
     async onBoot() {

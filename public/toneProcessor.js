@@ -1,6 +1,6 @@
 // Import the SuperpoweredWebAudio helper to allow us to extend the SuperpoweredWebAudio.AudioWorkletProcessor class
 
-import { SuperpoweredWebAudio } from "./superpowered/SuperpoweredWebAudio.js";
+import "./js/Superpowered.js";
 
 class SuperpoweredSingleGeneratorStageProcessor extends SuperpoweredWebAudio.AudioWorkletProcessor {
 
